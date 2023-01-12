@@ -3,7 +3,7 @@
 #define MAXSTR 50
 #define MAXPCS 120
 
-//Definicao de estruturas
+//Definição de estruturas
 typedef enum{
     Desktop = 1, Portatil = 2, Servidor = 3
 } TipoPc;
@@ -18,17 +18,14 @@ typedef struct {
     TipoPc tipoPc;
 } Tinventario;
 
-//Definicao de funcoes
+//Definição de funções
 
-//Funcoes de verificacao de data
+//Funções de verificação de data
 
-int bissexto(int ano)
-{
-    // funcao retorna 1 se o ano for bissexto e 0 senao for
-    if (ano % 4 == 0)
-    {
-        if (ano % 100 == 0)
-        {
+int bissexto(int ano){
+    // Recebe como parâmetro um ano. A função retorna 1 se o ano for bissexto e 0 senão for
+    if (ano % 4 == 0){
+        if (ano % 100 == 0){
             if (ano % 400 == 0)
                 return 1;
             else
@@ -40,56 +37,45 @@ int bissexto(int ano)
     return 0;
 }
 
-int ultimo(int mes, int ano)
-{
-    // funcao retorna o ultimo dia do 'mes' com base no 'ano'
-    if (mes >= 1 && mes <= 12)
-    {
-        if (mes == 2)
-        {
+int ultimo(int mes, int ano){
+    // Recebe como parâmetro um mês e um ano. A função retorna o último dia do mês com base no ano
+    if (mes >= 1 && mes <= 12){
+        if (mes == 2){
             if (bissexto(ano))
                 return 29;
             else
                 return 28;
         }
-        else
-        {
+        else{
             if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12)
                 return 31;
             else
                 return 30;
         }
     }
-    else
-    {
+    else{
         printf("\nMes invalido!\n");
         return 0;
     }
 }
 
-int valida(int data[])
-{
-    // funcao retorna 1 se a data passada for valida, e 0 se nao for
-    if (data[2] > 0)
-    {
-        if (data[1] >= 1 && data[1] <= 12)
-        {
+int valida(int data[]){
+    // Recebe como parâmetro um vetor de data. A função retorna 1 se for válida e 0 senão for
+    if (data[2] > 0){
+        if (data[1] >= 1 && data[1] <= 12){
             if (data[0] > 0 && data[0] <= ultimo(data[1], data[2]))
                 return 1;
-            else
-            {
+            else{
                 return 0;
                 printf("Data invalida");
             }
         }
-        else
-        {
+        else{
             return 0;
             printf("Data invalida");
         }
     }
-    else
-    {
+    else{
         return 0;
         printf("Data invalida");
     }
@@ -98,28 +84,30 @@ int valida(int data[])
 
 //Funcionalidades do sistema
 
-int menu(){
-    int opcao;
-    do
-    {
-        printf("\n=====================MENU=====================\n");
-        printf("[1] Inserir informacao dos PCs da organizacao\n");
-        printf("[2] Listar todos os registros de PCs inseridos\n");
-        printf("[3] Listar PCs por categoria\n");
-        printf("[4] Remover PCs por Numero de Registro\n");
-        printf("[5] Gravar registros de PCs no ficheiro\n");
-        printf("[6] Ler registros nos ficheiros\n");
-        printf("[0] Sair\n");
-        scanf("%d", &opcao);
-    } while (opcao < 0 || opcao > 6);
-    return (int) opcao;
+char menu(){
+    /*Imprime o menu e devolve uma opção inserida pelo usuário*/
+    char opcao;
+    printf("\n=====================MENU=====================\n");
+    printf("[1] Inserir informacao dos PCs da organizacao\n");
+    printf("[2] Listar todos os registros de PCs inseridos\n");
+    printf("[3] Listar PCs por categoria\n");
+    printf("[4] Remover PC por Numero de Registro\n");
+    printf("[5] Gravar registros de PCs no ficheiro\n");
+    printf("[6] Ler registros do Ficheiro e Mostrar\n");
+    printf("[7] Ler do Ficheiro, Ordenar, Gravar e Mostrar\n");
+    printf("[8] Calcular o Valor Estimado Total de todos os PCs registrados\n");
+    printf("[0] Sair\n");
+    scanf(" %c", &opcao);
+    return opcao;
 }
 
 int getNumRegistro(){
+    /*Recupera do arquivo "numRegistro.bin" o último número de registro inserido e retorna. Caso o 
+    arquivo não exista, significa que não há nenhum registro. Portanto, neste caso retorna 0*/
     FILE *fp;
     int quantidadePCs;
 
-    if((fp = fopen("quantidadePCs.bin", "rb")) == NULL){
+    if((fp = fopen("numRegistro.bin", "rb")) == NULL){
         return 0;
     }
     else{
@@ -130,9 +118,10 @@ int getNumRegistro(){
 }
 
 void setNumRegistro(int quantidadePCs){
+    /*Recebe uma quantidade de PCs como parâmetro e grava no ficheiro "numRegistro.bin"*/
     FILE *fp;
 
-    if((fp = fopen("quantidadePCs.bin", "wb")) == NULL){
+    if((fp = fopen("numRegistro.bin", "wb")) == NULL){
         printf("Erro ao abrir o arquivo");
         return;
     }
@@ -141,6 +130,8 @@ void setNumRegistro(int quantidadePCs){
 }
 
 void inserePC(Tinventario *pcs, int quantidade){
+    /*Recebe como parâmetro um vetor de PCs e a quantidade de PCs. A função coleta as informações 
+    individuais de cada PC, perguntando os valores dos atributos ao usuário, armazenando no vetor*/
     int numRegistro = getNumRegistro();
     int auxTipoPc, auxData[3];
 
@@ -206,9 +197,11 @@ void inserePC(Tinventario *pcs, int quantidade){
     setNumRegistro(numRegistro);
 }
 
-void gravarPC(Tinventario pcs[], char nomeFicheiro[], int quantidade){
+void gravarPCs(Tinventario pcs[], char nomeFicheiro[], int quantidade){
+    /*Recebe como parâmetro um vetor de PCs, o nome do ficheiro e a quantidade de PCS. A função grava 
+    as informações do vetor no ficheiro indicado em modo de 'adição'. Caso ele não exista, é então 
+    criado*/
     FILE *fp;
-    strcat(nomeFicheiro, ".bin");
 
     if((fp = fopen(nomeFicheiro, "ab")) == NULL){
         printf("Erro ao abrir o arquivo\n");
@@ -219,14 +212,30 @@ void gravarPC(Tinventario pcs[], char nomeFicheiro[], int quantidade){
     fclose(fp);
 }
 
+void reescreverPCs(Tinventario pcs[], char nomeFicheiro[], int quantidade){
+    /*Recebe como parâmetro um vetor de PCs, o nome do ficheiro e a quantidade de PCS. A função grava 
+    as informações do vetor no ficheiro indicado em modo de 'reescrita'. Caso ele não exista, é então 
+    criado*/
+    FILE *fp;
+
+    if((fp = fopen(nomeFicheiro, "wb")) == NULL){
+        printf("Erro ao abrir o arquivo\n");
+        return;
+    }
+
+    fwrite(pcs, sizeof(Tinventario), quantidade, fp);
+    fclose(fp);
+}
+
 int lerPCs(Tinventario *pcs, char nomeFicheiro[]){
+    /*Recebe como parâmetro um vetor de PCs e o nome do ficheiro. A função copia as informações do
+    ficheiro para o vetor, e retorna a quantidade de registros lidos*/
     FILE *fp;
     int i;
-    strcat(nomeFicheiro, ".bin");
 
     if((fp = fopen(nomeFicheiro, "rb")) == NULL){
         printf("Erro ao abrir o arquivo!\n");
-        return;
+        return 0;
     }
 
     for (i = 0; i < MAXPCS; i++)
@@ -240,32 +249,31 @@ int lerPCs(Tinventario *pcs, char nomeFicheiro[]){
     return i;
 }
 
-void imprimePCs(Tinventario *pcs, int quantidade, int opcao){
-    for (int i = 0; i < quantidade; i++)
+void mostrarPC(Tinventario pcs){
+    /*Recebe como parâmetro uma estrutura de PC. Então, a imprime no terminal*/
+    printf("\nNumero de Registro: %d", pcs.numeroRegistro);
+    printf("\nNumero de Serie: %s", pcs.numeroSerie);
+    printf("\nMarca: %s", pcs.marca);
+    printf("\nProcessador: %s", pcs.processador);
+    printf("\nQuantidade memoria RAM: %.1f", pcs.quantidadeMemoria);
+    printf("\nEspaco em disco: %.1f", pcs.espacoDisco);
+    printf("\nPreco de Custo: %.2f", pcs.precoCusto);
+    printf("\nData de compra: [%d/%d/%d]", pcs.data[0], pcs.data[1], pcs.data[2]);
+    printf("\nTipo PC: ");
+    switch (pcs.tipoPc)
     {
-        if (pcs[i].tipoPc == opcao || opcao == 4){
-            printf("\nINFORMACOES PC %d", (i + 1));
-            printf("\nNumero de Registro: %d", pcs[i].numeroRegistro);
-            printf("\nNumero de Serie: %s", pcs[i].numeroSerie);
-            printf("\nMarca: %s", pcs[i].marca);
-            printf("\nProcessador: %s", pcs[i].processador);
-            printf("\nQuantidade memoria RAM: %.1f", pcs[i].quantidadeMemoria);
-            printf("\nEspaco em disco: %.1f", pcs[i].espacoDisco);
-            printf("\nPreco de Custo: %.2f", pcs[i].precoCusto);
-            printf("\nData de compra: [%d/%d/%d]", pcs[i].data[0], pcs[i].data[1], pcs[i].data[2]);
-            printf("\nTipo PC: ");
-            switch (pcs[i].tipoPc)
-            {
-                case Desktop: printf("Desktop\n"); break;
-                case Portatil: printf("Portatil\n"); break;
-                case Servidor: printf("Servidor\n"); break;
-                default: break;
-            }
-        }
+        case Desktop: printf("Desktop\n"); break;
+        case Portatil: printf("Portatil\n"); break;
+        case Servidor: printf("Servidor\n"); break;
+        default: break;
     }
 }
 
 void deletarPC(Tinventario *pcs, char nomeFicheiro[], int registroAlvo){
+    /*Recebe como parâmetro um vetor de PCs, o nome do ficheiro e um registro alvo. A função lê o 
+    ficheiro indicado e procura pelo registro alvo. Caso não encontre, sai da função. Caso encontre,
+    define o registro para '0', e copia para um vetor auxiliar todos os registro exceto '0'. Este
+    vetor auxiliar é então reescrito no ficheiro*/
     Tinventario auxiliar[MAXPCS];
     int quantidade = lerPCs(pcs, nomeFicheiro), verifica = 0;
 
@@ -291,14 +299,70 @@ void deletarPC(Tinventario *pcs, char nomeFicheiro[], int registroAlvo){
             j++;
         }
     }
-    
-    FILE *fp;
+    reescreverPCs(auxiliar, nomeFicheiro, quantidade);
+    printf("\nRegistro %d deletado com sucesso!\n", registroAlvo);
+}
 
-    if((fp = fopen(nomeFicheiro, "wb")) == NULL){
-        printf("Erro ao abrir o arquivo!");
-        return;
+void ordenarPCs(Tinventario pcs[], int quantidade, int crescente){
+    /*Recebe como parâmetro um vetor de PCs, a quantidade de PCs e a opção 'crescente'. A função 
+    ordena o vetor conforme o ano de compra do PC de forma crescente. Se a opção 'crescente' for 1, 
+    a função deixa o vetor como está. Caso seja 0, ela inverte o vetor crescente, deixando-o na ordem 
+    decrescente*/
+    int i,j,min;
+    Tinventario temp, reverso[quantidade];
+    
+    for(i = 0; i <= quantidade - 2; i++){
+        min = i;
+        
+        for(j = i + 1; j <= quantidade - 1; j++)
+            if(pcs[j].data[2] < pcs[min].data[2]) min=j;
+        
+        if(min != i){
+            temp = pcs[min];
+            pcs[min] = pcs[i];
+            pcs[i] = temp;
+        }
     }
 
-    fwrite(auxiliar, sizeof(Tinventario), quantidade, fp);
-    fclose(fp); 
+    if(!crescente){
+        j = quantidade -1;
+        for (i = 0; i < quantidade; i++)
+        {
+            reverso[j] = pcs[i];
+            j--;
+        }
+        for (i = 0; i < quantidade; i++) pcs[i] = reverso[i];
+    }
+}
+
+int listarPCs(Tinventario *pcs, char nomeFicheiro[], int crescente){
+    /*Recebe como parâmetro um vetor de PCs, o nome do ficheiro e a opção 'crescente'. A função lê
+    o ficheiro indicado e se não houver registros, retorna '-1'. Caso haja registros, ordena na 
+    ordem escolhida (1: crescente, 0: decrescente), depois imprime no terminal os PCs ordenados
+    e retorna 1, indicano execução bem sucedida*/
+    int quantidade = lerPCs(pcs, nomeFicheiro);
+    if (quantidade == 0)
+        return -1;
+    ordenarPCs(pcs, quantidade, crescente);
+
+    for (int i = 0; i < quantidade; i++)
+    {
+        printf("\nINFORMACOES PC %d", (i + 1));
+        mostrarPC(pcs[i]);
+    }
+    return 1;
+}
+
+float calcularValorPCs(Tinventario *pcs, char nomeFicheiro[]){
+    /*Recebe como parâmetro um vetor de PCs e o nome do ficheiro. A função lê o ficheiro e calcula
+    o valor estimado de todos os PCs lidos, fazendo uma soma simples dos preços de custo. Essa soma
+    é então retornada*/
+    int quantidade = lerPCs(pcs, nomeFicheiro);
+
+    float valorPCs = 0;
+    for (int i = 0; i < quantidade; i++)
+    {
+        valorPCs += pcs[i].precoCusto;
+    }
+    return valorPCs;
 }

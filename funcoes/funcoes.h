@@ -12,7 +12,7 @@ int valida(int data[]);
 
 //Funcionalidades do sistema
 
-int menu();
+char menu();
 
 int getNumRegistro();
 
@@ -20,10 +20,18 @@ void setNumRegistro(int quantidadePCs);
 
 void inserePC(Tinventario *pcs, int quantidade);
 
-void gravarPC(Tinventario pcs[], char nomeFicheiro[], int quantidade);
+void gravarPCs(Tinventario pcs[], char nomeFicheiro[], int quantidade);
+
+void reescreverPCs(Tinventario pcs[], char nomeFicheiro[], int quantidade);
 
 int lerPCs(Tinventario *pcs, char nomeFicheiro[]);
 
-void imprimePCs(Tinventario *pcs, int quantidade, int opcao);
+void mostrarPC(Tinventario pcs);
 
 void deletarPC(Tinventario *pcs, char nomeFicheiro[], int registroAlvo);
+
+void ordenarPCs(Tinventario pcs[], int quantidade, int crescente);
+
+int listarPCs(Tinventario *pcs, char nomeFicheiro[], int crescente);
+
+float calcularValorPCs(Tinventario *pcs, char nomeFicheiro[]);
